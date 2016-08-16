@@ -30,8 +30,10 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     element.value_callback = 'webform_multiple_file_value_callback';
     element.form_id = form.id;
 
+    // add container for uploaded media
+    html = '<div id="' + element_id + '-media"></div>'
     // add media buttons
-    html = '<div class="media-buttons-containter">';
+    html += '<div class="media-buttons-containter">';
     var button = {};
 
     component.extra.filtering.types.forEach(function(type) {
