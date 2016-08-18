@@ -5,12 +5,13 @@
 /**
  * enum for webfform action
  */
-var  WebformFileActions = {
-  PICTURE_UPLOAD : 1,
+var WebformFileActions = {
+  PICTURE_UPLOAD: 1,
   PICTURE_RECORD: 2,
   VIDEO_UPLOAD: 3,
   VIDEO_RECORD: 4,
-  AUDIO_RECORD: 5
+  AUDIO_RECORD: 5,
+  PICTURE_MULTIPLE_UPLOAD: 6,
 };
 
 /**
@@ -23,7 +24,7 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     // make the widget(s) to power this component.
 
     element.type = 'hidden';
-    // element.type = 'textfield';
+    //element.type = 'textfield';
 
     // Attach a value_callback and the form id to the element so we can assemble the user's
     // input into a JSON object for the element's form state value.
@@ -36,41 +37,42 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     html += '<div class="media-buttons-containter">';
     var button = {};
 
-    component.extra.filtering.types.forEach(function(type) {
+    component.extra.filtering.types.forEach(function (type) {
       console.log(type);
       switch (type) {
         case 'jpg':
-          button =  webform_mutliple_file_media_button({
-            'data-icon' : 'fa-camera',
-            'data-input_id' : element_id,
-            'data-action': WebformFileActions.PICTURE_RECORD
+          button = webform_mutliple_file_media_button({
+            'data-icon': 'fa-camera',
+            'data-input_id': element_id,
+            'data-action': WebformFileActions.PICTURE_MULTIPLE_UPLOAD // cordova-imagePicker plugin
           });
           html += theme('button', button);
-          button =  webform_mutliple_file_media_button({
-            'data-icon' : 'fa-file-image-o',
-            'data-input_id' : element_id,
-            'data-action': WebformFileActions.PICTURE_UPLOAD
+          button = webform_mutliple_file_media_button({
+            'data-icon': 'fa-file-image-o',
+            'data-input_id': element_id,
+            // 'data-action': WebformFileActions.PICTURE_UPLOAD
+            'data-action': WebformFileActions.PICTURE_MULTIPLE_UPLOAD // cordova-imagePicker plugin
           });
           html += theme('button', button);
           break;
         case 'mp4':
-          button =  webform_mutliple_file_media_button({
-            'data-icon' : 'fa-video-camera',
-            'data-input_id' : element_id,
+          button = webform_mutliple_file_media_button({
+            'data-icon': 'fa-video-camera',
+            'data-input_id': element_id,
             'data-action': WebformFileActions.VIDEO_RECORD
           });
           html += theme('button', button);
-          button =  webform_mutliple_file_media_button({
-            'data-icon' : 'fa-file-video-o',
-            'data-input_id' : element_id,
+          button = webform_mutliple_file_media_button({
+            'data-icon': 'fa-file-video-o',
+            'data-input_id': element_id,
             'data-action': WebformFileActions.VIDEO_UPLOAD
           });
           html += theme('button', button);
           break;
         case 'mp3':
-          button =  webform_mutliple_file_media_button({
-            'data-icon' : 'fa-microphone',
-            'data-input_id' : element_id,
+          button = webform_mutliple_file_media_button({
+            'data-icon': 'fa-microphone',
+            'data-input_id': element_id,
             'data-action': WebformFileActions.AUDIO_RECORD
           });
           html += theme('button', button);
@@ -83,7 +85,7 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     html += '$("#' + drupalgap_get_page_id() + '").on("pageshow",function(){' +
       'document.addEventListener(' +
       '"deviceready", webform_multiple_file_upload, false );' +
-      '});' ;
+      '});';
 
     html += '</script>';
 
@@ -95,7 +97,9 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     }
 
   }
-  catch (error) { console.log('webform_component_multiple_file_widget_form  - ' + error); }
+  catch (error) {
+    console.log('webform_component_multiple_file_widget_form  - ' + error);
+  }
 }
 
 /**
@@ -110,16 +114,20 @@ function webform_mutliple_file_media_button(attributes) {
       attributes: {
         // 'data-icon' : icon,
         'data-iconpos': 'notext',
-        'data-inline' : 'true',
-        'data-shadow' : 'false',
-        'data-theme' : 'c',
-        'class' : 'ui-nodisc-icon webform-mutliple-file-media-button'
+        'data-inline': 'true',
+        'data-shadow': 'false',
+        'data-theme': 'c',
+        'class': 'ui-nodisc-icon webform-mutliple-file-media-button'
       }
     };
-    for (var attribute in attributes) { button.attributes[attribute] = attributes[attribute]; }
+    for (var attribute in attributes) {
+      button.attributes[attribute] = attributes[attribute];
+    }
     return button;
   }
-  catch (error) { console.log('webform_mutliple_file_media_button  - ' + error); }
+  catch (error) {
+    console.log('webform_mutliple_file_media_button  - ' + error);
+  }
 }
 
 
@@ -129,7 +137,7 @@ function webform_mutliple_file_media_button(attributes) {
 function webform_multiple_file_upload() {
   $(".webform-mutliple-file-media-button").on("click", function (event) {
     // get id of input field
-    var input_id  = $(this).data("input_id");
+    var input_id = $(this).data("input_id");
     var cardinality = $(this).data("cardinality");
     var action = $(this).data("action");
 
@@ -158,7 +166,7 @@ function webform_multiple_file_upload() {
       dpm(s[0]);
       var mediaHTML = "<video  style='max-width:100%;' controls><source src='" + s[0].fullPath + "'></video>";
       $("#" + input_id + "-media").append(mediaHTML);
-      uploadFile(s[0].fullPath);
+      uploadFile([s[0].fullPath]);
     }
 
     function captureAudioSuccess(s) {
@@ -169,13 +177,16 @@ function webform_multiple_file_upload() {
       dpm(s[0]);
       var mediaHTML = "<audio style='max-width:100%;' controls><source src='" + s[0].fullPath + "'></audio>";
       $("#" + input_id + "-media").append(mediaHTML);
-      uploadFile(s[0].fullPath);
+      uploadFile([s[0].fullPath]);
     }
 
-    function uploadFile(fileURI) {
+    function uploadFile(files) {
       // upload file
       var uri = encodeURI(Drupal.settings.site_path + "/" + Drupal.settings.endpoint + "/file/create_raw");
       var headers = {'X-CSRF-Token': Drupal.sessid};
+
+      // get first file
+      fileURI = files.shift();
 
       var fileOptions = new FileUploadOptions();
       fileOptions.fileKey = "files[file_1]";
@@ -201,7 +212,6 @@ function webform_multiple_file_upload() {
         uri,
         function (r) {
 
-          drupalgap_loading_message_hide();
           console.log("Code = " + r.responseCode);
           console.log("Response = " + r.response);
           console.log("Sent = " + r.bytesSent);
@@ -216,12 +226,12 @@ function webform_multiple_file_upload() {
             $("input#" + input_id).val($("input#" + input_id).val() + ',' + fid);
           }
 
-          // // add another item
-          // // @TODO: check cardinality of field
-          // _drupalgap_form_add_another_item(form_id, name, delta);
-          // // remove current media button
-          // $("#" + input_id + "-add-media-button").remove();
-          // file_upload();
+          // check for additional files
+          if (files.length > 0) {
+            uploadFile(files);
+          } else {
+            drupalgap_loading_message_hide();
+          }
         },
         function (error) {
           // error
@@ -244,11 +254,25 @@ function webform_multiple_file_upload() {
           mediaHTML += "<video  style='max-width:100%;' controls><source src='" + f + "'></video>";
         }
         $("#" + input_id + "-media").append(mediaHTML);
-        uploadFile(f);
+        uploadFile([f]);
       }, function (e) {
         dpm(e);
       }, cameraOptions);
+    }
 
+    function imagePickerSuccess(results) {
+      try {
+        var mediaHTML = '';
+        results.forEach(function (image) {
+          mediaHTML += "<img src='" + image + "'>";
+        });
+        $("#" + input_id + "-media").append(mediaHTML);
+        uploadFile(results);
+
+      }
+      catch (error) {
+        console.log('imagePickerSuccess - ' + error);
+      }
     }
 
     switch (action) {
@@ -277,11 +301,17 @@ function webform_multiple_file_upload() {
         // Record Audi
         navigator.device.capture.captureAudio(captureAudioSuccess, captureError, {limit: 1});
         break;
+      case WebformFileActions.PICTURE_MULTIPLE_UPLOAD:
+        window.imagePicker.getPictures(imagePickerSuccess, captureError, {
+          quality: (drupalgap.settings.camera.quality) ? drupalgap.settings.camera.quality : 50,
+          width: (drupalgap.settings.camera.targetWidth) ? drupalgap.settings.camera.targetWidth : 1024,
+          height: (drupalgap.settings.camera.targetHeight) ? drupalgap.settings.camera.targetHeight : 1024
+        });
+        break;
       default:
 
     }
-
-    })
+  })
 }
 
 /**
@@ -293,10 +323,12 @@ function webform_multiple_file_upload() {
 function webform_multiple_file_value_callback(id, element) {
   try {
     var value = [];
-    value = $('#'+id).val().split(',');
+    value = $('#' + id).val().split(',');
     return value;
   }
-  catch (error) { console.log('webform_multiple_file_value_callback - ' + error); }
+  catch (error) {
+    console.log('webform_multiple_file_value_callback - ' + error);
+  }
 }
 //# sourceURL=webform_multiple_file.js;
 
