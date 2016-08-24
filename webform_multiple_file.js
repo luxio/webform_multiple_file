@@ -38,13 +38,12 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     var button = {};
 
     component.extra.filtering.types.forEach(function (type) {
-      console.log(type);
       switch (type) {
         case 'jpg':
           button = webform_mutliple_file_media_button({
             'data-icon': 'fa-camera',
             'data-input_id': element_id,
-            'data-action': WebformFileActions.PICTURE_MULTIPLE_UPLOAD // cordova-imagePicker plugin
+            'data-action': WebformFileActions.PICTURE_RECORD // cordova-imagePicker plugin
           });
           html += theme('button', button);
           button = webform_mutliple_file_media_button({
