@@ -526,5 +526,46 @@ function webform_multiple_file_value_callback(id, element) {
     console.log('webform_multiple_file_value_callback - ' + error);
   }
 }
-//# sourceURL=webform_multiple_file.js;
+
+/**
+ * Implements hook_form_alter().
+ */
+function webform_multiple_file_form_alter(form, form_state, form_id) {
+  // add custom validate handler
+  if (form_id == 'webform_form') {
+      form.validate.push('webform_multiple_file_login_validate');
+    }
+}
+
+/**
+ * Custom validation handler for webform form.
+ */
+function webform_multiple_file_login_validate(form, form_state) {
+  try {
+    for (var name in form.elements) {
+      if (!form.elements.hasOwnProperty(name)) { continue; }
+      var element = form.elements[name];
+      if (name == 'submit') { continue; }
+      if (element.component.type != 'multiple_file') { continue; }
+      if (element.required) {
+        var valid = true;
+        var value = form_state.values[name][0];
+        if (empty(value)) { valid = false; }
+
+        if (!valid) {
+          var field_title = name;
+          if (element.component.name) { field_title = element.component.name; }
+          drupalgap_form_set_error(
+            name,
+            t('The') + ' ' + field_title + ' ' + t('field is required') + '.'
+          );
+        }
+      }
+    }
+  }
+  catch (error) { console.log('webform_multiple_file_login_validate - ' + error); }
+}
+
+
+//# sourceURL=webform_multiple_file.js
 
