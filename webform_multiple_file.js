@@ -24,7 +24,11 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     // make the widget(s) to power this component.
 
     element.type = 'hidden';
-    //element.type = 'textfield';
+    element.type = 'textfield';
+    // element.prefix = '<div class="webform-multiple-file-widget">';
+    // element.suffix = '</div>';
+    form.elements[component.form_key]['prefix'] = '<div class="webform-multiple-file-widget">';
+    form.elements[component.form_key]['suffix'] = '</div>';
 
     // Attach a value_callback and the form id to the element so we can assemble the user's
     // input into a JSON object for the element's form state value.
