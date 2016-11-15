@@ -49,14 +49,14 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
             'data-input_id': element_id,
             'data-action': WebformFileActions.PICTURE_RECORD // cordova-imagePicker plugin
           });
-          html += theme('button', button);
+          html += theme('liveloop_button', button);
           button = webform_mutliple_file_media_button({
             'data-icon': 'fa-file-image-o',
             'data-input_id': element_id,
             // 'data-action': WebformFileActions.PICTURE_UPLOAD
             'data-action': WebformFileActions.PICTURE_MULTIPLE_UPLOAD // cordova-imagePicker plugin
           });
-          html += theme('button', button);
+          html += theme('liveloop_button', button);
           break;
         case 'mp4':
           button = webform_mutliple_file_media_button({
@@ -64,13 +64,13 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
             'data-input_id': element_id,
             'data-action': WebformFileActions.VIDEO_RECORD
           });
-          html += theme('button', button);
+          html += theme('liveloop_button', button);
           button = webform_mutliple_file_media_button({
             'data-icon': 'fa-file-video-o',
             'data-input_id': element_id,
             'data-action': WebformFileActions.VIDEO_UPLOAD
           });
-          html += theme('button', button);
+          html += theme('liveloop_button', button);
           break;
         case 'mp3':
           button = webform_mutliple_file_media_button({
@@ -78,7 +78,7 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
             'data-input_id': element_id,
             'data-action': WebformFileActions.AUDIO_RECORD
           });
-          html += theme('button', button);
+          html += theme('liveloop_button', button);
           break;
       }
     });
@@ -113,16 +113,17 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
 function webform_mutliple_file_media_button(attributes) {
   try {
     var button = {
-      text: 'button',
+      //text: 'button',
       attributes: {
         // 'data-icon' : icon,
         'data-iconpos': 'notext',
         'data-inline': 'true',
         'data-shadow': 'false',
-        'data-theme': 'c',
+        //'data-theme': 'c',
         'class': 'ui-nodisc-icon webform-mutliple-file-media-button',
         'onclick': 'webform_file_upload(this)'
-      }
+      },
+      icon: attributes['data-icon']
     };
     for (var attribute in attributes) {
       button.attributes[attribute] = attributes[attribute];
