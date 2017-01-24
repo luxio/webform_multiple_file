@@ -36,7 +36,7 @@ function webform_component_multiple_file_widget_form(form, form_state, entity, e
     element.form_id = form.id;
 
     // add container for uploaded media
-    html = '<div id="' + element_id + '-media"></div>'
+    html = '<div id="' + element_id + '-media"></div>';
     // add media buttons
     html += '<div class="media-buttons-containter">';
     var button = {};
