@@ -3,7 +3,7 @@
  */
 
 /**
- * Implements webform_component_hook_widgetform().
+ * Implements webform_component_hook_widget_form().
  */
 function webform_component_multiple_file_widget_form(form, form_state, entity, entity_type, bundle, component, element) {
   try {
